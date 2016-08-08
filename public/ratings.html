@@ -1,0 +1,26 @@
+<div ng-controller="ratingsController">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+    <div class="panel panel-default">
+      	<div class="panel-heading">Oceny filmu: {{title}} <button class="btn btn-primary"ng-click="films()">Wróć do filmów</button></div>
+      	<div class="panel-body">
+	średnia ocena: {{average}}
+     <div class="input-group">
+	<input class="form-control" ng-model="newRating" />
+	<span class="input-group-btn">
+	   <button class="btn btn-default"ng-click="addRating()">Dodaj ocenę</button>
+	</span>
+     </div>
+        <table border="1" class="table">
+        <tr class="success">
+            <th>ocena</th>
+    </tr>
+        <tr ng-repeat="rating in ratings" class="info">
+	<td>{{rating.rating}} </td>
+    	</tr>
+        </table>   
+      </div>
+    </div>
+        </div>
+        <div class="col-md-2"></div>
+</div>

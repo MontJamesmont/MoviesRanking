@@ -1,0 +1,147 @@
+if (typeof $ === 'undefined') {
+    throw new Error('This application\'s JavaScript requires jQuery');
+}
+
+
+var App = angular.module('moviesApp',[]);
+
+App.run(["$rootScope",
+    function ($rootScope) {
+
+        // Scope Globals
+        $rootScope.$restpath = '//.../';
+        $rootScope.app = {
+            name: 'Movies',
+            description: 'Ranking of movies',
+            year: ((new Date()).getFullYear()),
+        };
+    }]);
+
+App.config(['$stateProvider', '$urlRouterProvider',
+    function ($stateProvider, $urlRouterProvider) {
+        'use strict';
+
+	$urlRouterProvider.otherwise('/movies');
+
+
+        // Application Routes
+        $stateProvider
+            .state('movies', {
+                url: '/movies',
+                templateUrl: 'public/movies.html'
+                //controller: 'AppController'
+            })
+    }]);
+
+
+
+
+
+App.controller('loginController',['$window', '$rootScope', '$http', '$location', function($window, $rootScope, $http, $location){
+var login=this;
+login.counts=[];
+login.usel={};
+login.usel.pass="";
+login.login="";
+login.pass="";
+login.login2="";
+login.pass2="";
+login.loginUser = function () {
+	$http.get('http://localhost:3000/user/read/'+login.login)
+        .success(function (response) {
+		login.usel = response;
+		console.log("login: "+login.pass + "," + login.usel.pass);			
+		if(login.usel.pass.localeCompare(login.pass)==0){
+			$window.location.href = 'http://localhost:3000/booking';
+			//$location.absUrl('http://localhost:3000/booking').replace();
+		}
+        })
+        .error(function (data, status, headers, config) {
+		console.log("error");
+        });
+};
+login.signUpUser = function () {
+	login.usel={
+		"login": login.login2,
+		"pass": login.pass2
+	}
+	if(login.usel.login.length>0 && login.usel.pass.length>0){
+		$http.post('http://localhost:3000/user/create',login.usel)
+		.success(function (response) {
+			console.log("succed");			
+			$window.location.href = 'http://localhost:3000/';
+		})
+		.error(function (data, status, headers, config) {
+			console.log("error");
+		});
+	}
+};
+}]);
+
+App.controller('bookingController',['$window','$rootScope', '$http', '$location', function($window, $rootScope, $http, $location){
+var booking=this;
+booking.counts = [];
+booking.products = [];
+booking.booki={};
+$http.get('http://localhost:3000/event/list')
+        .success(function (response) {
+		console.log("response: "+response);
+		booking.products = response;
+		console.log(booking.products[0].name);
+        })
+        .error(function (data, status, headers, config) {
+		console.log("error");
+        });
+booking.czyZamow=false;
+booking.book = function () {
+booking.products.forEach(function(event, index){
+if(index<booking.counts.length && booking.counts[index]>0){
+	booking.czyZamow=true;
+	var Id=event._id;
+	booking.booki={
+	"userName" : "Stefan",
+	"eventId":event._id,
+	"count":booking.counts[index],
+	"sum":booking.counts[index]*event.cena
+	}
+		$http.post('http://localhost:3000/booking/create', JSON.stringify(booking.booki))
+		.success(function (response) {
+			console.log(booking.booki.userName);
+			console.log("succes");			        })
+		.error(function (data, status, headers, config) {
+			console.log("error");
+		});
+}else console.log("else");
+});
+$window.location.href = 'http://localhost:3000/booked';
+};
+}]);
+
+App.controller('bookedController',['$rootScope', '$http', '$location', function($rootScope, $http, $location){
+var booked=this;
+booked.products = [];
+$http.get('http://localhost:3000/booking/list')
+        .success(function (response) {
+		console.log("response: "+response);
+		booked.products = response;
+        })
+        .error(function (data, status, headers, config) {
+		console.log("error");
+        })
+	.then(function () {
+	   booked.products.forEach(function(product, index){
+		$http.get('http://localhost:3000/event/read/'+product.eventId)
+		.success(function (response) {
+			console.log("succed");
+			booked.products[index].name=response.name;
+			booked.products[index].date=response.date;	
+			booked.products[index].miejsce=response.miejsce;
+			booked.products[index].cena=response.cena;
+		})
+		.error(function (data, status, headers, config) {
+			console.log("error");
+		});
+	   });
+	});
+}]);
+
