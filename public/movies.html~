@@ -6,13 +6,11 @@
       <div class="panel-body">
 
         <table border="1" class="table">
-        <!-- column headers -->
         <tr class="success">
             <th>plakat</th>
             <th>tytuł malejąco:<input type="checkbox" ng-model="desc" /></th>
 	    <th>przycisk</th>
     </tr>
-    <!-- column data -->
         <tr ng-repeat="movie in movies | orderBy: ifDesc()" class="info">
 	<td><img ng-src={{movie.poster}} height='100' weight='100' /> </td>
 	<td>{{movie.title}}</td>

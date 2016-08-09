@@ -2,7 +2,7 @@
         <div class="col-md-2"></div>
         <div class="col-md-8">
     <div class="panel panel-default">
-      	<div class="panel-heading">Oceny filmu: {{title}} <button class="btn btn-default"ng-click="films()">Wróć do filmów</button></div>
+      	<div class="panel-heading">Oceny filmu: {{title}} <button class="btn btn-primary"ng-click="films()">Wróć do filmów</button></div>
       	<div class="panel-body">
 	średnia ocena: {{average}}
      <div class="input-group">
